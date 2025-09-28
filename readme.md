@@ -1,0 +1,1 @@
+Detects motion by finding difference between current and previos frame. Converts diff to red and overlays on original frame to show what part of the frame is moving. Change "overlayed" in cv2.imshow('Webcam', overlayed) to mask_color if you only want to see the difference in red.
