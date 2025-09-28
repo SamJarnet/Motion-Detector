@@ -1,25 +1,43 @@
 import cv2
 import numpy as np
 
-
 cap = cv2.VideoCapture(0)
 
 if not cap.isOpened():
     print("Cannot open camera")
     exit()
-test, test1 = cap.read()
-temp_frame = test1
+
+# Create base frames
+temp_frame = None
+
 while True:
-    ret, frame = cap.read()
-    if not np.array_equal(temp_frame, frame):
-        print("motion")
-    temp_frame = frame
+    ret, frame_color = cap.read()
     if not ret:
-        print("Can't receive frame (stream end?). Exiting ...")
+        print("Exit")
         break
 
-    # Display the resulting frame
-    cv2.imshow('Webcam Feed', frame)
+    # Convert to greyscale 
+    gray = cv2.cvtColor(frame_color, cv2.COLOR_BGR2GRAY)
+    blurred_frame = cv2.GaussianBlur(gray, (11, 11), 0)
+    mask_color = np.zeros_like(frame_color)
+
+    # Check for change
+    if temp_frame is not None:
+        diff = cv2.absdiff(temp_frame, blurred_frame)
+        _, threshold = cv2.threshold(diff, 25, 255, cv2.THRESH_BINARY)
+        mask_color = cv2.cvtColor(threshold, cv2.COLOR_GRAY2BGR)  # convert to 3 channels or it doesnt work
+        mask_color[:, :, 0] = 0  
+        mask_color[:, :, 1] = 0 
+        movement = np.any(threshold)
+        print(movement)
+
+    # Update last frame
+    temp_frame = blurred_frame
+
+    overlayed = cv2.addWeighted(frame_color, 1.0, mask_color, 0.5, 0)
+
+    # Display frames
+    cv2.imshow('Webcam', overlayed)
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
 
