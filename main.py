@@ -19,7 +19,7 @@ while True:
     # Convert to greyscale 
     gray = cv2.cvtColor(frame_colour, cv2.COLOR_BGR2GRAY)
     blurred_frame = cv2.GaussianBlur(gray, (11, 11), 0)
-    mask_color = np.zeros_like(frame_colour)
+    mask_colour = np.zeros_like(frame_colour)
 
     # Check for change
     if temp_frame is not None:
