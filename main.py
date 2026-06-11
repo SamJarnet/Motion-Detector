@@ -34,10 +34,10 @@ while True:
     # Update last frame
     temp_frame = blurred_frame
 
-    overlayed = cv2.addWeighted(frame_colour, 1.0, mask_colour, 0.5, 0)
+    overlayed = cv2.addWeighted(cv2.convertScaleAbs(frame_colour, alpha=1.0, beta=-50), 1.0, mask_colour, 0.5, 0)
 
     # Display frames
-    cv2.imshow('Webcam', overlayed)
+    cv2.imshow('Webcam', mask_colour)
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
 
